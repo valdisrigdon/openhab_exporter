@@ -95,7 +95,7 @@ func (cc OpenhabStatsCollector) Collect(ch chan<- prometheus.Metric) {
 				strings.Join(item.GroupNames, ";"),
 			)
 		} else {
-			level.Info(cc.logger).Log("msg", "Skipped item", "name", item.Name, "type", item.Type, "state", item.State)
+			level.Debug(cc.logger).Log("msg", "Skipped item", "name", item.Name, "type", item.Type, "state", item.State)
 		}
 	}
 }
