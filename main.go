@@ -3,17 +3,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
 
-	"github.com/go-kit/kit/log/level"
+	"github.com/alecthomas/kingpin/v2"
+	"github.com/go-kit/log/level"
 	"github.com/prometheus/common/promlog"
 	"github.com/prometheus/common/promlog/flag"
 	"github.com/prometheus/common/version"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 	listenAddress = kingpin.Flag("web.listen-address", "Address on which to expose metrics and web interface.").Default(":9266").String()
 )
 
-//Item of items
+// Item of items
 type Item struct {
 	Link       string   `json:"link"`
 	State      string   `json:"state"`
@@ -84,7 +84,7 @@ func getRest(endpoint string) (resp []byte, err error) {
 
 	defer response.Body.Close()
 
-	body, _ := ioutil.ReadAll(response.Body)
+	body, _ := io.ReadAll(response.Body)
 
 	if response.StatusCode != 200 {
 		return nil, fmt.Errorf("Expected http response code 200 got %d, check `apiurl`", response.StatusCode)

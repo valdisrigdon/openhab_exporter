@@ -58,6 +58,7 @@ func (cc OpenhabStatsCollector) Collect(ch chan<- prometheus.Metric) {
 		case "Dimmer":
 		case "Switch":
 		case "Contact":
+		case "Number:Temperature":
 		default:
 			process = false
 		}
@@ -79,7 +80,11 @@ func (cc OpenhabStatsCollector) Collect(ch chan<- prometheus.Metric) {
 					case "NULL":
 						break
 					default:
-						f, _ = strconv.ParseFloat(item.State, 64)
+						state := item.State
+						if item.Type == "Number:Temperature" {
+							state = strings.Split(state, " ")[0]
+						}
+						f, _ = strconv.ParseFloat(state, 64)
 					}
 					return f
 				}(),
@@ -90,7 +95,7 @@ func (cc OpenhabStatsCollector) Collect(ch chan<- prometheus.Metric) {
 				strings.Join(item.GroupNames, ";"),
 			)
 		} else {
-			level.Debug(cc.logger).Log("msg", "Skipped item", "name", item.Name, "type", item.Type, "state", item.State)
+			level.Info(cc.logger).Log("msg", "Skipped item", "name", item.Name, "type", item.Type, "state", item.State)
 		}
 	}
 }
